@@ -1,0 +1,52 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+"Indicates what fields are available at the top level of a query operation."
+type Query {
+    "Find a single user by an identifying attribute."
+    user(
+      "Search by primary key."
+      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+
+      "Search by email address."
+      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+    ): User @find
+
+    "List multiple users."
+    users(
+      "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+      name: String @where(operator: "like")
+    ): [User!]! @paginate(defaultCount: 10)
+    
+    tasks: [Task!]! @guard(with: ["sanctum"]) @field(resolver: "App\\GraphQL\\Queries\\TaskQuery@tasks")
+}
+
+type Mutation {
+    login(email: String!, password: String!): AuthPayload @field(resolver: "App\\GraphQL\\Mutations\\AuthMutations@login")
+    logout: LogoutPayload @guard(with: ["sanctum"]) @field(resolver: "App\\GraphQL\\Mutations\\AuthMutations@logout")
+    createTask(name: String!): Task @guard(with: ["sanctum"]) @field(resolver: "App\\GraphQL\\Mutations\\TaskMutations@createTask")
+    updateTask(id: ID!, name: String, state: Boolean): Task @guard(with: ["sanctum"]) @field(resolver: "App\\GraphQL\\Mutations\\TaskMutations@updateTask")
+    deleteTask(id: ID!): Task @guard(with: ["sanctum"]) @field(resolver: "App\\GraphQL\\Mutations\\TaskMutations@deleteTask")
+}
+
+type Task {
+    id: ID!
+    name: String!
+    state: Boolean!
+    user: User!
+}
+
+type User {
+    id: ID!
+    email: String!
+    name: String!
+}
+
+type AuthPayload {
+    token: String
+    user: User
+}
+
+type LogoutPayload {
+    message: String
+}
