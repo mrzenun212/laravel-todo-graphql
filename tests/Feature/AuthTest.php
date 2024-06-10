@@ -36,9 +36,11 @@ class AuthTest extends TestCase
     public function test_user_can_logout()
     {
         $user = User::factory()->create();
-        $this->actingAs($user, 'sanctum');
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        $response = $this->postJson('/graphql', [
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->postJson('/graphql', [
             'query' => 'mutation {
                 logout {
                     message
@@ -47,6 +49,12 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertJson(['data' => ['logout' => ['message' => 'Logged out']]]);
+        $response->assertJson([
+            'data' => [
+                'logout' => [
+                    'message' => 'Logged out',
+                ],
+            ],
+        ]);
     }
 }

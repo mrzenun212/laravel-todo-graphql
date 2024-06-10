@@ -27,7 +27,7 @@ class TaskTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertJson(['data' => ['createTask' => ['name' => 'New Task', 'state' => 'todo']]]);
+        $response->assertJson(['data' => ['createTask' => ['name' => 'New Task', 'state' => false]]]);
     }
 
     public function test_user_can_update_task()
@@ -38,7 +38,7 @@ class TaskTest extends TestCase
 
         $response = $this->postJson('/graphql', [
             'query' => 'mutation {
-                updateTask(id: ' . $task->id . ', name: "Updated Task", state: "done") {
+                updateTask(id: ' . $task->id . ', name: "Updated Task", state: true) {
                     id
                     name
                     state
@@ -47,7 +47,7 @@ class TaskTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertJson(['data' => ['updateTask' => ['name' => 'Updated Task', 'state' => 'done']]]);
+        $response->assertJson(['data' => ['updateTask' => ['name' => 'Updated Task', 'state' => true]]]);
     }
 
     public function test_user_can_delete_task()
