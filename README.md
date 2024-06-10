@@ -46,8 +46,19 @@ This command will build and start all the necessary containers.
 
 2.	Access the application:
 
-	•	Frontend: http://localhost:3000 - note: sometimes you need to restart the `nuxt_app` server for it locate the graphql endpoint. Just manually restart the container using the Docker Desktop app.
-	•	Backend: http://localhost:8082
+•	Backend: http://localhost:8082
+
+•	Frontend: http://localhost:3000 - note: sometimes you need to restart the `nuxt_app` server for it locate the graphql endpoint. Just manually restart the container using the Docker Desktop app.
+
+- For logging in, used the following accounts included in the seeder
+```
+email: user1@example.com
+password: user1
+
+email: user2@example.com
+password: user2
+```
+
 
 ## API Documentation
 
